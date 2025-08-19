@@ -1,0 +1,91 @@
+id: environmental_study_chile_dia_v1
+name: "Chilean Environmental Impact Assessment (DIA)"
+version: "1.0.0"
+description: "Generates Declaración de Impacto Ambiental documents for BESS projects under Chilean SEIA regulations"
+
+# JSON Schema for input validation
+jsonSchema:
+  type: object
+  required:
+    - project_name
+    - project_location
+    - storage_capacity_mwh
+    - power_capacity_mw
+    - proponent_name
+    - proponent_rut
+  properties:
+    project_name:
+      type: string
+      description: "Official name of the BESS project"
+    project_location:
+      type: string
+      description: "Physical location/address of the project"
+    commune:
+      type: string
+      description: "Chilean commune where project is located"
+    region:
+      type: string
+      description: "Chilean region where project is located"
+    storage_capacity_mwh:
+      type: number
+      description: "Energy storage capacity in MWh"
+    power_capacity_mw:
+      type: number
+      description: "Power capacity in MW"
+    proponent_name:
+      type: string
+      description: "Name of project proponent/developer"
+    proponent_rut:
+      type: string
+      description: "RUT of project proponent"
+    technology_type:
+      type: string
+      description: "Battery technology (e.g., Lithium-ion, etc.)"
+      default: "Lithium-ion"
+    connection_voltage:
+      type: string
+      description: "Grid connection voltage level"
+    environmental_baseline:
+      type: object
+      properties:
+        flora_fauna:
+          type: string
+          description: "Flora and fauna assessment summary"
+        soil_conditions:
+          type: string
+          description: "Soil conditions and quality"
+        water_resources:
+          type: string
+          description: "Water resources in the area"
+        air_quality:
+          type: string
+          description: "Air quality baseline"
+        noise_levels:
+          type: string
+          description: "Ambient noise levels"
+
+# Output configuration
+output:
+  format: markdown
+  language: es
+  sections:
+    - introduction
+    - project_description
+    - environmental_impact_assessment
+    - mitigation_measures
+    - monitoring_plan
+    - conclusions
+
+# Regulatory references
+regulatory_framework:
+  - "Ley 19.300 - Ley de Bases Generales del Medio Ambiente"
+  - "DS 40/2012 - Reglamento del SEIA"
+  - "Guía SEIA - Proyectos de Generación de Energía"
+  - "NCh ISO 14001 - Sistemas de Gestión Ambiental"
+
+# Compliance requirements
+compliance_checks:
+  - "Project falls under DIA category (not EIA)"
+  - "Environmental impacts are not significant"
+  - "Mitigation measures are adequate"
+  - "Monitoring plan is comprehensive"

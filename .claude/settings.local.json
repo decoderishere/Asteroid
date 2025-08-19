@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(lsof:*)",
+      "Bash(kill:*)",
+      "Bash(curl:*)",
+      "Bash(NEXT_PUBLIC_API_URL=http://localhost:8000 npm run dev)",
+      "Bash(pkill:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm install:*)",
+      "Bash(rg:*)",
+      "Bash(ls:*)",
+      "Bash(true)",
+      "Bash(rm:*)",
+      "Bash(node:*)",
+      "Bash(npm i:*)"
+    ],
+    "deny": []
+  }
+}

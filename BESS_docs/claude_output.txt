@@ -1,0 +1,17 @@
+# save as decode_docs.py, then run:  python3 decode_docs.py
+import sys, re, base64, hashlib, pathlib
+print("Paste Claude's message here, then:\n  • mac/Linux: press Ctrl-D\n  • Windows: press Ctrl-Z then Enter\n")
+txt = sys.stdin.read()
+
+def extract(kind):
+    m = re.search(rf'-----BEGIN {kind} (.+?)-----\s+(.+?)\s+-----END {kind}-----', txt, re.S)
+    if not m:
+        print(f'{kind} block not found'); return
+    name = m.group(1).strip()
+    b64  = re.sub(r'\s+','', m.group(2))
+    data = base64.b64decode(b64)
+    pathlib.Path(name).write_bytes(data)
+    print(f'Wrote {name}  bytes={len(data)}  SHA256={hashlib.sha256(data).hexdigest()}')
+
+extract('DOCX')
+extract('PDF')

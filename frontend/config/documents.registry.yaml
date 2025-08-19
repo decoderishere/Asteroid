@@ -1,0 +1,30 @@
+version: "1.0"
+description: "Document Agent Plugin Registry for BESS Chile Permitting System"
+
+plugins:
+  - id: environmental_study_chile_dia_v1
+    name: "Chilean Environmental Impact Assessment (DIA)"
+    description: "Generates Declaración de Impacto Ambiental for BESS projects in Chile"
+    version: "1.0.0"
+    author: "BESS Chile System"
+    category: "environmental"
+    language: "es"
+    output_format: "markdown"
+    enabled: true
+    requirements:
+      - "Project basic information (name, location, capacity)"
+      - "Technical specifications"
+      - "Environmental baseline data"
+    tags:
+      - "environmental"
+      - "chile"
+      - "dia"
+      - "seia"
+      - "permits"
+
+metadata:
+  created: "2025-08-11"
+  last_updated: "2025-08-11"
+  total_plugins: 1
+  supported_languages: ["es", "en"]
+  target_jurisdiction: "Chile"
