@@ -12,7 +12,9 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   ClockIcon,
-  DocumentArrowDownIcon
+  DocumentArrowDownIcon,
+  TrashIcon,
+  EllipsisVerticalIcon
 } from '@heroicons/react/24/outline'
 import { apiClient } from '@/lib/api'
 import { Project, Document, KPIMetric } from '@/types'
@@ -20,11 +22,22 @@ import FileUpload from '@/components/FileUpload'
 import ProjectChat from '@/components/ProjectChat'
 import GuidedDocumentGeneration from '@/components/GuidedDocumentGeneration'
 import DocumentPreview from '@/components/DocumentPreview'
+import { DeleteProjectModal } from '@/components/projects/DeleteProjectModal'
+import { Button } from '@/components/ui/button'
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import { getDocTypeTranslationKey } from '@/lib/utils'
 import { useTranslation } from '@/contexts/LanguageContext'
+import { useRouter } from 'next/navigation'
 
 export default function ProjectDetailPage() {
   const { t } = useTranslation()
+  const router = useRouter()
   const params = useParams()
   const projectId = params.projectId as string
   
@@ -35,6 +48,7 @@ export default function ProjectDetailPage() {
   const [uploading, setUploading] = useState(false)
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [previewOpen, setPreviewOpen] = useState(false)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
 
   useEffect(() => {
     loadProjectData()
@@ -131,6 +145,11 @@ export default function ProjectDetailPage() {
   const handleClosePreview = () => {
     setPreviewOpen(false)
     setSelectedDocument(null)
+  }
+
+  const handleProjectDeleted = () => {
+    // Navigate back to projects list
+    router.push('/projects')
   }
 
   const getKPIValue = (metricName: string): number => {
@@ -269,9 +288,39 @@ export default function ProjectDetailPage() {
               <p className="text-gray-600 dark:text-gray-400 mt-2">{project.description}</p>
             )}
           </div>
-          <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(project.status)}`}>
-            {project.status}
-          </span>
+          <div className="flex items-center space-x-3">
+            <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(project.status)}`}>
+              {project.status}
+            </span>
+            
+            {/* Project Actions Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <EllipsisVerticalIcon className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => router.push(`/projects/${projectId}/settings`)}>
+                  Configuración
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push(`/projects/${projectId}/export`)}>
+                  Exportar proyecto
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push(`/projects/${projectId}/duplicate`)}>
+                  Duplicar proyecto
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={() => setDeleteModalOpen(true)}
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20"
+                >
+                  <TrashIcon className="h-4 w-4 mr-2" />
+                  Eliminar proyecto
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
@@ -501,6 +550,16 @@ export default function ProjectDetailPage() {
           isOpen={previewOpen}
           onClose={handleClosePreview}
           onUpdate={loadProjectData}
+        />
+      )}
+
+      {/* Delete Project Modal */}
+      {project && (
+        <DeleteProjectModal
+          project={project}
+          isOpen={deleteModalOpen}
+          onClose={() => setDeleteModalOpen(false)}
+          onDeleted={handleProjectDeleted}
         />
       )}
     </div>

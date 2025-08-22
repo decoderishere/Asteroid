@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Progress } from '@/components/ui/progress'
 import { 
   CheckCircle, 
   Calendar, 
@@ -17,10 +18,12 @@ import {
   History,
   Eye,
   FileJson,
-  Markdown,
-  ExternalLink
+  ExternalLink,
+  Loader2,
+  FileCode
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { usePdfGeneration, sampleEnvironmentalStudyData } from '@/hooks/usePdfGeneration'
 
 // Mock data types as specified
 interface Section {
@@ -86,6 +89,7 @@ export default function AIDocumentOutput({
   onOpenRuns = () => {}
 }: AIDocumentOutputProps) {
   const [activeTab, setActiveTab] = useState<'preview' | 'markdown' | 'json'>('preview')
+  const { generateEnvironmentalStudyPDF, generateFromHTML, isGenerating, progress } = usePdfGeneration()
 
   const handleCopy = (content: string, type: string) => {
     navigator.clipboard.writeText(content).then(() => {
@@ -94,6 +98,24 @@ export default function AIDocumentOutput({
     }).catch(() => {
       toast.error('Failed to copy to clipboard')
     })
+  }
+
+  const handlePdfDownload = async () => {
+    try {
+      if (docRun.metadata.documentType === "Investment-Grade Feasibility Study") {
+        // Use sample environmental study data for demo
+        await generateEnvironmentalStudyPDF(sampleEnvironmentalStudyData)
+      } else {
+        // Generate PDF from current HTML content
+        await generateFromHTML(
+          docRun.html,
+          `${docRun.title.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`
+        )
+      }
+      onDownload('pdf')
+    } catch (error) {
+      console.error('PDF download failed:', error)
+    }
   }
 
   const formatDate = (dateString: string) => {
@@ -245,7 +267,7 @@ export default function AIDocumentOutput({
                       Preview
                     </TabsTrigger>
                     <TabsTrigger value="markdown" className="flex items-center gap-2">
-                      <Markdown className="h-4 w-4" />
+                      <FileCode className="h-4 w-4" />
                       Markdown
                     </TabsTrigger>
                     <TabsTrigger value="json" className="flex items-center gap-2">
@@ -352,11 +374,30 @@ export default function AIDocumentOutput({
                 <CardContent className="space-y-3">
                   <Button 
                     className="w-full" 
-                    onClick={() => onDownload('pdf')}
+                    onClick={handlePdfDownload}
+                    disabled={isGenerating}
                   >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download PDF
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Generando PDF...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download PDF
+                      </>
+                    )}
                   </Button>
+                  
+                  {isGenerating && (
+                    <div className="space-y-2">
+                      <Progress value={progress} className="w-full" />
+                      <p className="text-xs text-muted-foreground text-center">
+                        {progress}% completado
+                      </p>
+                    </div>
+                  )}
                   
                   <Button 
                     variant="outline" 

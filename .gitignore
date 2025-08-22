@@ -89,3 +89,6 @@ out/
 
 # Secrets
 .env
+
+*storybook.log
+storybook-static

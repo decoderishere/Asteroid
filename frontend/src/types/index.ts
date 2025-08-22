@@ -15,6 +15,10 @@ export interface Project {
   project_developer?: string
   created_at: string
   updated_at: string
+  // Soft-delete fields
+  deleted_at?: string | null
+  deleted_by?: string | null
+  delete_reason?: string | null
 }
 
 export interface Document {
@@ -30,6 +34,10 @@ export interface Document {
   content?: string
   created_at: string
   updated_at: string
+  // Soft-delete fields
+  deleted_at?: string | null
+  deleted_by?: string | null
+  delete_reason?: string | null
 }
 
 export interface DocumentVersion {
@@ -113,4 +121,75 @@ export interface CreateProjectData {
   technology_type?: string
   grid_connection_type?: string
   project_developer?: string
+}
+
+// Project deletion types
+export interface DeleteProjectRequest {
+  projectId: string
+  actorId: string
+  reason?: string
+}
+
+export interface DeleteProjectResponse {
+  success: boolean
+  message: string
+  deletedAt: string
+  childCounts: {
+    documents: number
+    files: number
+    tasks: number
+    traces: number
+  }
+}
+
+export interface ProjectDeletionSafety {
+  canDelete: boolean
+  blockingReasons: string[]
+  inFlightJobs: {
+    id: string
+    type: string
+    status: string
+    estimatedCompletion?: string
+  }[]
+  warnings: string[]
+}
+
+export interface RestoreProjectRequest {
+  projectId: string
+  actorId: string
+  reason?: string
+}
+
+// User permissions
+export interface UserPermissions {
+  userId: string
+  projectId?: string
+  permissions: string[]
+  role: 'owner' | 'admin' | 'collaborator' | 'viewer'
+}
+
+// Audit event types
+export interface ProjectDeletedEvent {
+  type: 'project.deleted'
+  projectId: string
+  projectName: string
+  actorId: string
+  timestamp: string
+  childCounts: {
+    documents: number
+    files: number
+    tasks: number
+    traces: number
+  }
+  deleteReason?: string
+  metadata: Record<string, any>
+}
+
+export interface ProjectRestoredEvent {
+  type: 'project.restored'
+  projectId: string
+  projectName: string
+  actorId: string
+  timestamp: string
+  metadata: Record<string, any>
 }

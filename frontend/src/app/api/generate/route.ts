@@ -47,27 +47,3 @@ export async function POST(req: NextRequest) {
     raw: resp,
   });
 }
-
-// app/api/generate/route.ts
-import { anthropic } from "@anthropic-ai/sdk"; // or your client
-import { NextResponse } from "next/server";
-
-export async function POST(req: Request) {
-  const body = await req.json();
-
-  // call your orchestrator/Claude here
-  const result = await anthropic.messages.create({
-    model: body.model ?? "claude-3-7-sonnet-2025-xx",
-    system: body.system, // your QUALITY-FIRST system prompt
-    messages: body.messages,
-    max_tokens: 8000, // tune as needed
-  });
-
-  // DO NOT console.log the full content — send it to the client:
-  // result.content may be array segments; flatten to a single string
-  const text = Array.isArray(result.content)
-    ? result.content.map(p => ("text" in p ? p.text : "")).join("")
-    : (result as any).content?.[0]?.text || (result as any).content || "";
-
-  return NextResponse.json({ text });
-}

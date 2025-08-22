@@ -16,6 +16,8 @@ export default function Navigation() {
     { name: t('projects'), href: '/projects' },
     { name: t('documents'), href: '/documents' },
     { name: 'Runs', href: '/runs' },
+    { name: 'PDF Demo', href: '/pdf-demo' },
+    { name: 'Section Builder', href: '/section-builder-demo' },
     { name: t('dashboard'), href: '/dashboard' },
     { name: t('settings'), href: '/settings' },
   ]
